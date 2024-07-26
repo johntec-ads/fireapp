@@ -1,4 +1,4 @@
-
+import { db } from './fireseConection'
 
 function App() {
   return(
