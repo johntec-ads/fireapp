@@ -1,4 +1,5 @@
-import { db } from './fireseConection'
+
+import { db } from './firebaseConection'
 
 function App() {
   return(
