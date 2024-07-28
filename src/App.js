@@ -11,7 +11,11 @@ import {
   deleteDoc,
   onSnapshot,
 } from 'firebase/firestore';
-import { createUserWithEmailAndPassword } from 'firebase/auth'
+
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from 'firebase/auth'
 
 
 import './app.css';
@@ -24,6 +28,9 @@ function App () {
 
   const [ email, setEmail ] = useState( '' );
   const [ senha, setSenha ] = useState( '' );
+
+  const [ user, setUser ] = useState( false );
+  const [ userDetail, setUserDetail ] = useState( {} );
 
   const [ posts, setPosts ] = useState( [] );
 
@@ -51,17 +58,6 @@ function App () {
 
 
   async function handleAdd () {
-    /*     await setDoc( doc(db, "post", "12345"), {
-          titulo: titulo,
-          autor: autor,
-        } )
-        .then(() => {
-          console.log("Dados Registrados no BD")
-    
-        })
-        .catch((error) => {
-          console.log("Gerou Erro" + error)
-        }) */
 
     await addDoc( collection( db, "post" ), {
       titulo: titulo,
@@ -145,18 +141,41 @@ function App () {
   async function novoUsuario () {
     await createUserWithEmailAndPassword( auth, email, senha )
       .then( () => {
-        console.log( 'Cadastrado com sucesso' );        
+        console.log( 'Cadastrado com sucesso' );
         setEmail( '' );
         setSenha( '' );
       } )
-      .catch( (error) => {
-        if(error.code === 'auth/weak-password'){
-          console.log('Senha muito fraca')
-        }else if(error.code === 'auth/email-already-in-use'){
-          alert('Email já existe.')
+      .catch( ( error ) => {
+        if ( error.code === 'auth/weak-password' ) {
+          console.log( 'Senha muito fraca' )
+        } else if ( error.code === 'auth/email-already-in-use' ) {
+          alert( 'Email já existe.' )
         }
       } )
 
+  }
+
+  async function logarUsuario () {
+    await signInWithEmailAndPassword( auth, email, senha )
+      .then( ( value ) => {
+        console.log( 'user logado com sucesso' )
+        console.log( value.user )
+
+        setUserDetail( {
+          uid: value.user.uid,
+          email: value.user.email,
+        } )
+        setUser( true );
+
+
+        setEmail( '' )
+        setSenha( '' )
+
+      } )
+      .catch( () => {
+        console.log( 'Erro ao fazer loguin' )
+
+      } )
   }
 
 
@@ -164,6 +183,15 @@ function App () {
     <div>
       <h1> React JS + Firebase </h1>
 
+      {user && (
+        <div>
+          <strong>Seja bem vindo(a) (Você esta logado)</strong> <br/>
+          <span>ID: {userDetail.uid} - Email: {userDetail.email} </span>
+          <br/><br/>
+        </div>
+      )}
+
+      
       <div className='container' >
         <h2>Usuários</h2>
         <label>Email</label>
@@ -180,6 +208,7 @@ function App () {
           placeholder='Digite sua senha'
         /> <br /><br />
         <button onClick={ novoUsuario } >Novo usuário</button>
+        <button onClick={ logarUsuario } >Logar Usuário</button>
       </div>
       <hr />
 
