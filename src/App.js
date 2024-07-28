@@ -22,8 +22,8 @@ function App () {
   const [ autor, setAutor ] = useState( '' );
   const [ idPost, setIdPost ] = useState( '' );
 
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
+  const [ email, setEmail ] = useState( '' );
+  const [ senha, setSenha ] = useState( '' );
 
   const [ posts, setPosts ] = useState( [] );
 
@@ -142,14 +142,20 @@ function App () {
       } )
   }
 
-   async function novoUsuario() {
-    await createUserWithEmailAndPassword(auth, email, senha )
-    .then(() => {
-      console.log('Cadastrado com sucesso')
-    })
-    .catch(() => {
-      console.log('Erro ao cadastrar')
-    })
+  async function novoUsuario () {
+    await createUserWithEmailAndPassword( auth, email, senha )
+      .then( () => {
+        console.log( 'Cadastrado com sucesso' );        
+        setEmail( '' );
+        setSenha( '' );
+      } )
+      .catch( (error) => {
+        if(error.code === 'auth/weak-password'){
+          console.log('Senha muito fraca')
+        }else if(error.code === 'auth/email-already-in-use'){
+          alert('Email já existe.')
+        }
+      } )
 
   }
 
@@ -162,20 +168,20 @@ function App () {
         <h2>Usuários</h2>
         <label>Email</label>
         <input
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder='Digite o e-mail'
-        /> <br/>
+          value={ email }
+          onChange={ ( e ) => setEmail( e.target.value ) }
+          placeholder='Digite o e-mail'
+        /> <br />
 
-<label>Senha</label>
+        <label>Senha</label>
         <input
-        value={senha}
-        onChange={(e) => setSenha(e.target.value)}
-        placeholder='Digite sua senha'
-        /> <br/><br/>  
-        <button onClick={novoUsuario} >Novo usuário</button>      
+          value={ senha }
+          onChange={ ( e ) => setSenha( e.target.value ) }
+          placeholder='Digite sua senha'
+        /> <br /><br />
+        <button onClick={ novoUsuario } >Novo usuário</button>
       </div>
-      <hr/>
+      <hr />
 
       <div className='container' >
         <h2>POST</h2>
