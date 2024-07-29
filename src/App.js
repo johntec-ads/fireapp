@@ -15,6 +15,7 @@ import {
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  signOut,
 } from 'firebase/auth'
 
 
@@ -178,15 +179,28 @@ function App () {
       } )
   }
 
+  async function fazerLogout() {
+    await signOut(auth)
+    setUser(false);
+    setUserDetail({})
+  }
+
 
   return (
     <div>
       <h1> React JS + Firebase </h1>
 
+      {/* var str = "seu_email@dominio.com";
+var primeiraPalavra = str.split("@")[0];
+console.log(primeiraPalavra); // Exibe "seu_email" */}
+
       {user && (
         <div>
-          <strong>Seja bem vindo(a) (Você esta logado)</strong> <br/>
-          <span>ID: {userDetail.uid} - Email: {userDetail.email} </span>
+          
+
+          <strong>Seja bem vindo(a)  {userDetail.email.split("@")[0]} (Você esta logado)</strong> <br/>
+          <span>ID: {userDetail.uid} - Email: {userDetail.email} </span><br/>
+          <button onClick={fazerLogout} > Sair da Conta </button>
           <br/><br/>
         </div>
       )}
@@ -209,6 +223,7 @@ function App () {
         /> <br /><br />
         <button onClick={ novoUsuario } >Novo usuário</button>
         <button onClick={ logarUsuario } >Logar Usuário</button>
+        
       </div>
       <hr />
 
