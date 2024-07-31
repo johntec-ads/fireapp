@@ -20,5 +20,6 @@ const firebaseApp = initializeApp(firebaseConfig);
 //A const db obtém a cosnt firebaseApp
 const db = getFirestore(firebaseApp);
 
-//Exportando a const db, para consumir o banco de dados
+/* Como o export não tem default, o import dentro do arquivo,
+ deve conter chaves. Exemple: import{db} from './firebaseConnection */
 export { db } ;
