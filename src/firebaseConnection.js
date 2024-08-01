@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';//Import do BD do firebase
+import { getAuth } from './firebase/auth'
 
 
 /* import {initializeApp, } from 'firebase/app';
@@ -20,6 +21,10 @@ const firebaseApp = initializeApp(firebaseConfig);
 //A const db obtém a cosnt firebaseApp
 const db = getFirestore(firebaseApp);
 
+
+
+const auth = getAuth(firebaseApp)
+
 /* Como o export não tem default, o import dentro do arquivo,
  deve conter chaves. Exemple: import{db} from './firebaseConnection */
-export { db } ;
+export { db, auth } ;

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';//Hook para criar os estados
 import { db } from './firebaseConnection';/* Import do banco de dados */
+
 import {
   doc,//doc cria ref para um documento dentro de uma coleção 
   setDoc,/* setDoc: Cria ou sobrescreve um documento no firestore */
@@ -84,7 +85,6 @@ function App () {
      }) */
 
     //BUSCANDO VARIOS POSTS DE UMA COLEÇÃO
-
     const postsRef = collection( db, "posts" ) //Declara um referência e obtém a colection
     await getDocs( postsRef )
       .then( ( snapshot ) => {
@@ -104,7 +104,7 @@ function App () {
         console.log( 'Erro na busca' + error )
       } )
   }
-
+/* Edita post */
   async function editarPost () {
     const postRef = doc( db, "posts", idPost )
     await updateDoc( postRef, {
@@ -130,7 +130,8 @@ function App () {
       .then( () => {
         alert( 'Post deletado.' )
       } )
-      .catch( () => {
+      .catch( (error) => {
+        console.log("Erro ao deletar " + error)
 
       } )
   }
@@ -138,6 +139,13 @@ function App () {
   return (
     <div>
       <h2>React + Firebase ;-)</h2>
+      <div className='container' >
+        <label>Email</label>
+        <input  />
+
+      </div>
+
+
       {/* Busca por ID */ }
       <div className='container' >
         <label>ID do Post</label>
