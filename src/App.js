@@ -1,4 +1,4 @@
-import { useState } from 'react';//Hook para criar os estados
+import { useState, useEffect } from 'react';//Hook para criar os estados
 import { db } from './firebaseConnection';/* Import do banco de dados */
 import {
   doc,//doc cria ref para um documento dentro de uma coleção 
@@ -9,7 +9,9 @@ import {
   getDocs,//Método usado para executar consultas em coleções ou grupos de coleções.
   updateDoc,/* O método updateDoc do Firestore é usado para atualizar campos específicos 
   de um documento existente sem substituir o documento inteiro. */
-  deleteDoc,//Metodo para excluir um documento no Cloud Firestore
+  deleteDoc,//Metodo para excluir um documento no Cloud Firestore.
+  onSnapshot,/* Usado para receber atualizações em tempo real*/
+
 
 } from 'firebase/firestore';
 
@@ -23,6 +25,27 @@ function App () {
   const [ idPost, setIdPost ] = useState( '' );
 
   const [ posts, setPosts ] = useState( [] );//state para obter as coleções de doc
+
+  /* Atualizando Real Time */
+  useEffect( () => {
+    async function loadPost () {
+      const unsub = onSnapshot( collection( db, "posts" ), ( snapshot ) => {
+
+        let listaPost = snapshot.docs.map( ( doc ) => {
+          return {
+            id: doc.id,
+            titulo: doc.data().titulo,
+            autor: doc.data().autor,
+          }
+        } )
+        setPosts( listaPost )
+
+      } )
+    }
+
+    loadPost();
+
+  }, [] );
 
   /* CADASTRAR UM ITEM ÚNICO */
   async function handleAdd () {
@@ -84,32 +107,32 @@ function App () {
 
   async function editarPost () {
     const postRef = doc( db, "posts", idPost )
-    await updateDoc(postRef, {
+    await updateDoc( postRef, {
       titulo: titulo,
       autor: autor
-    })
-    .then(() => {
-      console.log('Atualizado')
-      setIdPost('')
-      setTitulo('')
-      setAutor('')
+    } )
+      .then( () => {
+        console.log( 'Atualizado' )
+        setIdPost( '' )
+        setTitulo( '' )
+        setAutor( '' )
 
-    })
-    .catch(() => {
-      console.log('Erro ao atualizar o Post')
-    })
+      } )
+      .catch( () => {
+        console.log( 'Erro ao atualizar o Post' )
+      } )
   }
 
   /* Function para exclusão de posts */
-  async function excluirPost(id) {
-    const docRef = doc(db, "posts", id)
-    await deleteDoc(docRef)
-    .then(() => {
-      alert('Post deletado.')
-    })
-    .catch(() => {
-      
-    })
+  async function excluirPost ( id ) {
+    const docRef = doc( db, "posts", id )
+    await deleteDoc( docRef )
+      .then( () => {
+        alert( 'Post deletado.' )
+      } )
+      .catch( () => {
+
+      } )
   }
 
   return (
@@ -144,8 +167,8 @@ function App () {
           onChange={ ( e ) => setAutor( e.target.value ) }
         />
 
-        <button onClick={ handleAdd } >Cadastrar</button> <br/>
-        <button onClick={ buscarPost } >Buscar post</button> <br/>
+        <button onClick={ handleAdd } >Cadastrar</button> <br />
+        <button onClick={ buscarPost } >Buscar post</button> <br />
 
         <button onClick={ editarPost } >Atualizar Post</button>
 
@@ -156,8 +179,8 @@ function App () {
                 <strong>ID: { item.id } </strong> <br />
                 <span>Titulo: { item.titulo } </span> <br />
                 <span>Autor:  { item.autor } </span> <br />
-                {/* Botão para excluir o post */}
-                <button onClick={ () => excluirPost(item.id)} >Excluir</button><br />
+                {/* Botão para excluir o post */ }
+                <button onClick={ () => excluirPost( item.id ) } >Excluir</button><br />
 
               </li>
             )
