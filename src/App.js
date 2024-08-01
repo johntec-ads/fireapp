@@ -8,9 +8,8 @@ import {
   getDoc,//getDoc é usado para recuperar dados de um documento específico no Firestore .
   getDocs,//Método usado para executar consultas em coleções ou grupos de coleções.
   updateDoc,/* O método updateDoc do Firestore é usado para atualizar campos específicos 
-  de um documento existente sem substituir o documento inteiro.
-
-  */
+  de um documento existente sem substituir o documento inteiro. */
+  deleteDoc,//Metodo para excluir um documento no Cloud Firestore
 
 } from 'firebase/firestore';
 
@@ -83,9 +82,34 @@ function App () {
       } )
   }
 
-  function editarPost() {
-    const postRef = doc(db, "post", idPost)
-    await 
+  async function editarPost () {
+    const postRef = doc( db, "posts", idPost )
+    await updateDoc(postRef, {
+      titulo: titulo,
+      autor: autor
+    })
+    .then(() => {
+      console.log('Atualizado')
+      setIdPost('')
+      setTitulo('')
+      setAutor('')
+
+    })
+    .catch(() => {
+      console.log('Erro ao atualizar o Post')
+    })
+  }
+
+  /* Function para exclusão de posts */
+  async function excluirPost(id) {
+    const docRef = doc(db, "posts", id)
+    await deleteDoc(docRef)
+    .then(() => {
+      alert('Post deletado.')
+    })
+    .catch(() => {
+      
+    })
   }
 
   return (
@@ -97,7 +121,7 @@ function App () {
         <input
           placeholder='Digite o Id'
           value={ idPost }
-          onChange={(e) => setIdPost(e.target.value)}
+          onChange={ ( e ) => setIdPost( e.target.value ) }
         />
 
 
@@ -120,10 +144,10 @@ function App () {
           onChange={ ( e ) => setAutor( e.target.value ) }
         />
 
-        <button onClick={ handleAdd } >Cadastrar</button>
-        <button onClick={ buscarPost } >Buscar post</button>
+        <button onClick={ handleAdd } >Cadastrar</button> <br/>
+        <button onClick={ buscarPost } >Buscar post</button> <br/>
 
-        <button onClick={editarPost} >Atualizar Post</button>
+        <button onClick={ editarPost } >Atualizar Post</button>
 
         <ul>
           { posts.map( ( item ) => {
@@ -131,7 +155,9 @@ function App () {
               <li key={ item.id }>
                 <strong>ID: { item.id } </strong> <br />
                 <span>Titulo: { item.titulo } </span> <br />
-                <span>Autor:  { item.autor } </span>
+                <span>Autor:  { item.autor } </span> <br />
+                {/* Botão para excluir o post */}
+                <button onClick={ () => excluirPost(item.id)} >Excluir</button><br />
 
               </li>
             )
