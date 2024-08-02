@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';//Hook para criar os estados
-import { db } from './firebaseConnection';/* Import do banco de dados */
+import { db, auth } from './firebaseConnection';/* Import do banco de dados */
 
 import {
   doc,//doc cria ref para um documento dentro de uma coleção 
@@ -12,9 +12,14 @@ import {
   de um documento existente sem substituir o documento inteiro. */
   deleteDoc,//Metodo para excluir um documento no Cloud Firestore.
   onSnapshot,/* Usado para receber atualizações em tempo real*/
-
-
 } from 'firebase/firestore';
+
+import { 
+  createUserWithEmailAndPassword,
+
+} from 'firebase/auth'
+
+
 
 import './app.css';
 
@@ -24,6 +29,10 @@ function App () {
   const [ titulo, setTitulo ] = useState( '' );
   const [ autor, setAutor ] = useState( '' );
   const [ idPost, setIdPost ] = useState( '' );
+
+  //useState para autenticação de email
+  const [ email, setEmail ] = useState( '' );
+  const [ senha, setSenha ] = useState( '' );
 
   const [ posts, setPosts ] = useState( [] );//state para obter as coleções de doc
 
@@ -104,7 +113,7 @@ function App () {
         console.log( 'Erro na busca' + error )
       } )
   }
-/* Edita post */
+  /* Edita post */
   async function editarPost () {
     const postRef = doc( db, "posts", idPost )
     await updateDoc( postRef, {
@@ -130,24 +139,59 @@ function App () {
       .then( () => {
         alert( 'Post deletado.' )
       } )
-      .catch( (error) => {
-        console.log("Erro ao deletar " + error)
+      .catch( ( error ) => {
+        console.log( "Erro ao deletar " + error )
 
       } )
+  }
+
+  async function novoUsuario() {
+    await createUserWithEmailAndPassword(auth, email, senha)
+    .then(() => {
+      console.log( 'Cadastrado com sucesso')
+      
+      setEmail('')
+      setSenha('')
+    })
+    .catch((error) => {
+      //códigos de erro
+      if(error.code === 'auth/weak-password'){
+        alert('Senha muito fraca')
+      }else if(error.code === 'auth/email-already-in-use'){
+        alert('Email já existe!')
+      }
+    })
   }
 
   return (
     <div>
       <h2>React + Firebase ;-)</h2>
-      <div className='container' >
-        <label>Email</label>
-        <input  />
 
+      <div className='container'>
+        <h2>Usuários</h2>
+        <label>Email</label>
+        <input
+          value={ email }
+          onChange={ ( e ) => setEmail( e.target.value ) }
+          placeholder='Digite o email'
+        /> <br />
+
+        <label>senha</label>
+        <input
+          value={ senha }
+          onChange={ ( e ) => setSenha( e.target.value ) }
+          placeholder='Digite sua senha'
+        /> <br />
+        <button onClick={novoUsuario} >Cadastrar</button>
       </div>
 
+      <br /><br />
+      <hr />
+      <br /><br />
 
       {/* Busca por ID */ }
       <div className='container' >
+        <h2>Post</h2>
         <label>ID do Post</label>
         <input
           placeholder='Digite o Id'
