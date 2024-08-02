@@ -15,8 +15,10 @@ import {
 } from 'firebase/firestore';
 
 import { 
-  createUserWithEmailAndPassword,
-
+  createUserWithEmailAndPassword,//Cria user com email e senha
+  signInWithEmailAndPassword,//Loguin de user com email e senha
+  signOut,//logout de user
+  onAuthStateChanged,//Monitora se tem usuário logado
 } from 'firebase/auth'
 
 
@@ -34,7 +36,12 @@ function App () {
   const [ email, setEmail ] = useState( '' );
   const [ senha, setSenha ] = useState( '' );
 
-  const [ posts, setPosts ] = useState( [] );//state para obter as coleções de doc
+  //state para obter as coleções de doc
+  const [ posts, setPosts ] = useState( [] );
+
+  //state para renderizar o cliente logado
+  const [ user, setUser] = useState(false);
+  const [ userDetail, setUserDetail] = useState({});
 
   /* Atualizando Real Time */
   useEffect( () => {
@@ -56,6 +63,30 @@ function App () {
     loadPost();
 
   }, [] );
+
+  useEffect(() => {
+    async function checkLoguin() {
+      onAuthStateChanged(auth, (user) => {
+        if(user) {
+          //user logado
+          console.log(user)
+          setUser(true);
+          setUserDetail({
+            uid: user.uid,
+            email: user.email,
+          })
+
+        }else {
+          //sem user logado
+          setUser(false);
+          setUserDetail({});
+        }
+      })
+
+    }
+
+    checkLoguin()
+  }, [])
 
   /* CADASTRAR UM ITEM ÚNICO */
   async function handleAdd () {
@@ -163,9 +194,47 @@ function App () {
     })
   }
 
+  async function logarUsuario() {
+    await signInWithEmailAndPassword(auth, email, senha)
+    .then((value) => {
+      console.log('User logado com sucesso');
+      console.log(value.user);
+
+      //Buscando no value.use
+      setUserDetail({
+        uid: value.user.uid,
+        email: value.user.email,
+      })
+      setUser(true)
+
+      setEmail('')
+      setSenha('')
+
+    })
+    .catch(() => {
+      console.log('Erro ao logar')
+
+    })
+  }
+
+  async function fazerLogout() {
+    await signOut(auth)
+    setUser(false);
+    setUserDetail({});
+  }
+
   return (
     <div>
       <h2>React + Firebase ;-)</h2>
+
+      { user && (
+        <div>
+          <strong>Seja bem vindo(a)  (Você esta logado!) </strong>
+          <span>ID: {userDetail.uid} - Email: {userDetail.email} </span> <br/>
+          <button onClick={fazerLogout} >Sair da conta</button>
+          <br/><br/>
+        </div>
+      )}
 
       <div className='container'>
         <h2>Usuários</h2>
@@ -182,7 +251,8 @@ function App () {
           onChange={ ( e ) => setSenha( e.target.value ) }
           placeholder='Digite sua senha'
         /> <br />
-        <button onClick={novoUsuario} >Cadastrar</button>
+        <button onClick={novoUsuario} >Cadastrar</button> <br/>
+        <button onClick={logarUsuario} >Loguin</button>
       </div>
 
       <br /><br />
