@@ -230,6 +230,7 @@ function App () {
       { user && (
         <div>
           <strong>Seja bem vindo(a)  (Você esta logado!) </strong>
+          {/* Botão oculto, aparece somente se 'user' estiver logado */}
           <span>ID: {userDetail.uid} - Email: {userDetail.email} </span> <br/>
           <button onClick={fazerLogout} >Sair da conta</button>
           <br/><br/>
@@ -251,8 +252,8 @@ function App () {
           onChange={ ( e ) => setSenha( e.target.value ) }
           placeholder='Digite sua senha'
         /> <br />
-        <button onClick={novoUsuario} >Cadastrar</button> <br/>
-        <button onClick={logarUsuario} >Loguin</button>
+        <button onClick={novoUsuario} >Cadastro User</button> <br/>
+        <button onClick={logarUsuario} >Loguin User</button>
       </div>
 
       <br /><br />
@@ -289,7 +290,7 @@ function App () {
           onChange={ ( e ) => setAutor( e.target.value ) }
         />
 
-        <button onClick={ handleAdd } >Cadastrar</button> <br />
+        <button onClick={ handleAdd } >Cadastro Post</button> <br />
         <button onClick={ buscarPost } >Buscar post</button> <br />
 
         <button onClick={ editarPost } >Atualizar Post</button>
