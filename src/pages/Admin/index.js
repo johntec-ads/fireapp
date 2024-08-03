@@ -4,7 +4,7 @@ import React from 'react';
 function Admin() {
   return(
     <div>
-      <h1>Admin</h1>
+      <h1>Pagina Admin</h1>
     </div>
   )
 }
