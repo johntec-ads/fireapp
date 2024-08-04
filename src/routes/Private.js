@@ -4,7 +4,7 @@ import { Navigate } from 'react-router-dom';
 import { auth } from '../firebaseConnection';
 import { onAuthStateChanged } from 'firebase/auth';//Fica verificando se tem user logado
 
-export default function Private ( { Children } ) {
+function Private ( { Children } ) {
 
   const [ loading, setLoading ] = useState( true )//state para verificar se tem user ou não.
   const [ signed, setSigned ] = useState( false )//state que verifica se user esta logado ou não.
@@ -13,7 +13,7 @@ export default function Private ( { Children } ) {
     //Verifica se tem user logado
     async function checkLogin () {
       const unsub = onAuthStateChanged( auth, ( user ) => {
-        
+
         //se tem user logado
         if ( user ) {
           //Criando um objeto
@@ -22,16 +22,16 @@ export default function Private ( { Children } ) {
             email: user.email,
           }
           //salvar no localStorage
-          localStorage.setItem('@detailUser', JSON.stringify(userData))
+          localStorage.setItem( '@detailUser', JSON.stringify( userData ) )
 
-          setLoading(false);
-          setSigned(true);
+          setLoading( false );
+          setSigned( true );
 
 
         } else {
           //não possui user logado          
-          setLoading(false);
-          setSigned(false);
+          setLoading( false );
+          setSigned( false );
 
         }
 
@@ -43,21 +43,23 @@ export default function Private ( { Children } ) {
   }, [] )
 
   //Verificações
-  if(loading) {
+  if ( loading ) {
     //se tiver carreando, renderiza apenas um div
-    return(
+    return (
       <div>
-
+        carregando...
       </div>
     )
   }
 
-  if(!signed){//se não estiver logado
+  if ( !signed ) {//se não estiver logado
     //e estiver tentando acessar
-    return <Navigate to='/'/>
+    return <Navigate to='/' />
 
   }
 
   return Children;
 
 }
+
+export default Private;

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { auth } from '../../firebaseConnection';
@@ -27,7 +27,7 @@ function Home () {
         } )
 
         .catch( ( ) => {
-          console.log( 'Erro ao fazer loguin')
+          console.log( 'Erro ao fazer login')
         } )
 
     } else {
