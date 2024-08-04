@@ -4,7 +4,9 @@ import { Navigate } from 'react-router-dom';
 import { auth } from '../firebaseConnection';
 import { onAuthStateChanged } from 'firebase/auth';//Fica verificando se tem user logado
 
-function Private ( { Children } ) {
+
+
+function Private ( { children } ) {
 
   const [ loading, setLoading ] = useState( true )//state para verificar se tem user ou não.
   const [ signed, setSigned ] = useState( false )//state que verifica se user esta logado ou não.
@@ -34,10 +36,9 @@ function Private ( { Children } ) {
           setSigned( false );
 
         }
-
-      } )
-
+      })
     }
+
     checkLogin()
 
   }, [] )
@@ -52,13 +53,14 @@ function Private ( { Children } ) {
     )
   }
 
-  if ( !signed ) {//se não estiver logado
-    //e estiver tentando acessar
-    return <Navigate to='/' />
+  if ( !signed ) {
+    /* Se estiver tentando acessar, e não estiver logado,
+    será direcionado para o componente Home */
+    return <Navigate to='/'/>
 
   }
 
-  return Children;
+  return children;
 
 }
 
