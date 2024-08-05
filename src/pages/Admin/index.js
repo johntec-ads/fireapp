@@ -55,7 +55,7 @@ function Admin() {
               userUid: doc.data().userUid,
             })
           })
-          console.log(lista)
+         
           setTarefas(lista)
         })
       }
