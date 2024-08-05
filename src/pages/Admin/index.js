@@ -19,6 +19,7 @@ import {
   doc,/* where(query, field, operator, value): Filtra os resultados 
   da consulta com base em uma condição específica. */
 
+
  } from 'firebase/firestore';
 
 
@@ -39,31 +40,29 @@ function Admin() {
         const data = JSON.parse(userDetail);
         //Montando a referência
         const tarefaRef = collection(db, "tarefas")
-        const q = query(tarefaRef, orderBy("created", 'desc' ), where('userUid', "==" , data?.uid))
+        const q = query(tarefaRef, orderBy("created", "desc" ), where("userUid", "==" , data?.uid))
 
-        const unsub = onSnapshot(q, (onSnapshot) => {
+        /* PROCURANDO ERRO ...AQUI */
+
+        const unsub = onSnapshot(q, (snapshot) => {
+          
           let lista = [];
 
-          onSnapshot.forEach(() => {
+          snapshot.forEach((doc) => {
             lista.push({
               id: doc.id,
               tarefa: doc.data().tarefa,
               userUid: doc.data().userUid,
             })
           })
-
           console.log(lista)
           setTarefas(lista)
-
-
         })
-
-
       }
-
     }
 
     loadTarefas();
+
   },[])
 
    async function handleRegister(e) {
