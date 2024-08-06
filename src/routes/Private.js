@@ -37,6 +37,7 @@ function Private ( { children } ) {
 
         }
       })
+      console.log(unsub)
     }
 
     checkLogin()

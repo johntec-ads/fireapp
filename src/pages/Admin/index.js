@@ -59,6 +59,7 @@ function Admin () {
           } )
 
           console.log( lista )
+          console.log(unsub)
           setTarefas( lista )
         } )
       }
