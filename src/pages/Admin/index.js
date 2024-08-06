@@ -44,10 +44,10 @@ function Admin () {
         const tarefaRef = collection( db, "tarefas" )
         const q = query( tarefaRef, orderBy( "created", "desc" ), where( "userUid", "==", data?.uid ) )
 
-        /* PROCURANDO ERRO ...AQUI */
+        
 
+         
         const unsub = onSnapshot( q, ( snapshot ) => {
-
           let lista = [];
 
           snapshot.forEach( ( doc ) => {
